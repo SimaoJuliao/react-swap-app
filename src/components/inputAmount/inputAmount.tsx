@@ -15,6 +15,7 @@ const StyledContainer = styled.div`
   background-color: #eeeaf4;
   padding: 0rem 1rem;
   height: 5rem;
+  gap: 1rem;
 
   &:focus-within {
     box-shadow: 0 0 0 3px #a56bff;
@@ -22,13 +23,23 @@ const StyledContainer = styled.div`
 `;
 
 const StyledInput = styled.input`
-  background-color: transparent;
-  font-size: 1.5rem;
-  font-weight: 600;
-  border: none;
-  text-align: right;
-  width: auto;
-  max-width: 10ch;
+  && {
+    background-color: transparent;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border: none;
+    text-align: right;
+    width: auto;
+    max-width: 10ch;
+    padding: 0rem;
+  }
+`;
+
+const StyledImage = styled.img`
+  && {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 `;
 
 export const InputAmount: React.FC<InputAmountProps> = (props) => {
@@ -46,10 +57,8 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
     <StyledContainer>
       <div style={{ display: "flex", gap: "0.5rem" }}>
         {coin.image && (
-          <img
+          <StyledImage
             src={coin.image}
-            height="24"
-            width="24"
             alt={coin.name}
             loading="lazy"
             decoding="async"
