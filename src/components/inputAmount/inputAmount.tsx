@@ -1,47 +1,58 @@
+import type { Coin } from "../../types";
+
 export interface InputAmountProps {
-  currency: {
-    image?: string;
-    amount?: string | null;
-    dollars?: string | null;
-    name: string;
-    blockchainName: string;
-  };
+  coin: Coin;
+  fiatCoin: Coin;
   onChange: (value: string) => void;
 }
 
 export const InputAmount: React.FC<InputAmountProps> = (props) => {
-  const { currency, onChange } = props;
+  const { coin, fiatCoin, onChange } = props;
 
-  const handleOnChange =(value: string) => {
+  const handleOnChange = (value: string) => {
     const regex = /^[0-9]*[.,]?[0-9]*$/;
 
     if (value === "" || regex.test(value)) {
       onChange(value);
     }
-  }
+  };
 
   return (
     <div className="input-container">
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <label
-          style={{
-            color: "#280D5F",
-            fontSize: "20px",
-            fontWeight: 600,
-          }}
-        >
-          {currency.name}
-        </label>
-        <label
-          style={{
-            color: "#7A6EAA",
-            fontSize: "13px",
-            lineHeight: 1.5,
-            fontWeight: 400,
-          }}
-        >
-          {currency.blockchainName}
-        </label>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
+        {coin.image && (
+          <img
+            src={coin.image}
+            height="24"
+            width="24"
+            alt={coin.name}
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+          />
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <label
+            style={{
+              color: "#280D5F",
+              fontSize: "20px",
+              fontWeight: 600,
+            }}
+          >
+            {coin.name}
+          </label>
+          <label
+            style={{
+              color: "#7A6EAA",
+              fontSize: "13px",
+              lineHeight: 1.5,
+              fontWeight: 400,
+            }}
+          >
+            {coin.blockchainName}
+          </label>
+        </div>
       </div>
 
       <div
@@ -62,7 +73,7 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
           minLength={1}
           maxLength={79}
           spellCheck={false}
-          value={currency.amount || ""}
+          value={coin.value || ""}
           onChange={(e) => handleOnChange(e.target.value)}
         />
 
@@ -74,7 +85,7 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
             lineHeight: 1.5,
           }}
         >
-          ~ {currency.dollars || "0.00"}
+          ~ {fiatCoin.value || "0.00"} {fiatCoin.name}
         </label>
       </div>
     </div>

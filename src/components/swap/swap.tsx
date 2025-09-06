@@ -8,9 +8,7 @@ import { Arrow } from "../../assets";
 
 export const Swap: React.FC = () => {
   const {
-    currencyIN,
-    currencyOUT,
-    currencyUSD,
+    coins,
     slippage,
     isButtonSwapDisable,
     fetchEstimate,
@@ -42,12 +40,8 @@ export const Swap: React.FC = () => {
 
         {/* Input de BNB */}
         <InputAmount
-          currency={{
-            name: "BNB",
-            blockchainName: "BNB Chain",
-            amount: currencyIN.value,
-            dollars: `${currencyUSD.value || "0.00"} ${currencyUSD.name}`,
-          }}
+          coin={coins.coinIN}
+          fiatCoin={coins.coinFiat}
           onChange={(value) => fetchEstimate(value, true)}
         />
 
@@ -67,12 +61,8 @@ export const Swap: React.FC = () => {
 
         {/* Input de LCR */}
         <InputAmount
-          currency={{
-            name: "LCR",
-            blockchainName: "BNB Chain",
-            amount: currencyOUT.value,
-            dollars: `${currencyUSD.value || "0.00"} ${currencyUSD.name}`,
-          }}
+          coin={coins.coinOUT}
+          fiatCoin={coins.coinFiat}
           onChange={(value) => fetchEstimate(value, false)}
         />
       </div>

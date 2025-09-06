@@ -33,17 +33,15 @@ export const useGetEstimatedAmount = () => {
 
     if (publicClient && amount && Number(amount) > 0) {
       try {
-        const tokenDecimals = await getTokenDecimals(
-          isToGetAmountsOut ? address.in : address.out
-        );
-
-        const tokenOutDecimals = await getTokenDecimals(address.out);
-
         const tokenInDecimals = await getTokenDecimals(address.in);
+        const tokenOutDecimals = await getTokenDecimals(address.out);
 
         // Convert amount to bigint based on correct decimals
         const amountBigInt = BigInt(
-          Math.floor(Number(amount) * 10 ** Number(tokenDecimals))
+          Math.floor(
+            Number(amount) *
+              10 ** (isToGetAmountsOut ? tokenInDecimals : tokenOutDecimals)
+          )
         );
 
         // Swap Path (always IN → OUT)

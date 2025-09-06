@@ -1,21 +1,22 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useAccount, useBalance, useWalletClient } from "wagmi";
 import { formatUnits, parseEther } from "viem";
 
 import {
   PANCAKE_ROUTER_ADDRESS,
-  currencyOne,
-  currencyTwo,
-  currencyDollar,
+  coinOne,
+  coinTwo,
+  coinFiat,
 } from "../../constants";
 import routerAbi from "../../constants/pancakeRouterABI.json";
 import { useGetEstimatedAmount } from "../../helpers";
 import { debounce } from "lodash";
+import type { Coin } from "../../types";
 
-interface CurrenciesType {
-  amountIN?: string | null;
-  amountOUT?: string | null;
-  amountDollars?: string | null;
+interface CoinsType {
+  coinIN: Coin;
+  coinOUT: Coin;
+  coinFiat: Coin;
 }
 
 export const useSwapHelper = () => {
@@ -23,27 +24,16 @@ export const useSwapHelper = () => {
   const { address, isConnected } = useAccount();
   const fetchEstimatedAmount = useGetEstimatedAmount();
 
-  const [currencys, setCurrencys] = useState<CurrenciesType>();
+  const [coins, setCoins] = useState<CoinsType>({
+    coinIN: { ...coinOne, value: null },
+    coinOUT: { ...coinTwo, value: null },
+    coinFiat: { ...coinFiat, value: null },
+  });
   const [slippage, setSlippage] = useState<number>(0.5);
-
-  let currencyIN = {
-    ...currencyOne,
-    value: currencys?.amountIN,
-  };
-
-  let currencyOUT = {
-    ...currencyTwo,
-    value: currencys?.amountOUT,
-  };
-
-  const currencyUSD = {
-    ...currencyDollar,
-    value: currencys?.amountDollars,
-  };
 
   const { data: balanceIN } = useBalance({
     address: address,
-    token: currencyIN.address,
+    token: coins.coinIN.address,
   });
 
   const handleOnChangeSlippage = (value: number) => {
@@ -51,63 +41,62 @@ export const useSwapHelper = () => {
   };
 
   const handleCurrencySwitch = () => {
-    console.log("entrei aqui pha");
-
-    const currentIN = currencyIN;
-    const currentOUT = currencyOUT;
-
-    currencyIN = currentOUT;
-    currencyOUT = currentIN;
+    setCoins((prev) => ({
+      ...prev,
+      coinIN: prev.coinOUT,
+      coinOUT: prev.coinIN,
+    }));
   };
 
-  const debouncedHandleFetchEstimate = useCallback(
-    debounce((amount: string, isToGetAmountsOut: boolean) => {
+  const debouncedHandleFetchEstimate = debounce(
+    (amount: string, isToGetAmountsOut: boolean) => {
       fetchEstimatedAmount(
         amount,
         {
-          in: currencyIN.address,
-          out: currencyOUT.address,
+          in: coins.coinIN.address,
+          out: coins.coinOUT.address,
         },
         isToGetAmountsOut
       ).then((amounts) => {
-        const isLCR = currencyIN.address == currencyTwo.address;
+        const isLCR = coins.coinIN.address == coinTwo.address;
 
         fetchEstimatedAmount(
           isLCR ? amounts.out : amounts.in,
           {
-            in: isLCR ? currencyOUT.address : currencyIN.address,
-            out: currencyDollar.address,
+            in: isLCR ? coins.coinOUT.address : coins.coinIN.address,
+            out: coins.coinFiat.address,
           },
           true,
           ({ out }) => {
-            setCurrencys({
-              amountDollars: out,
-              amountIN: amounts.in,
-              amountOUT: amounts.out,
-            });
+            setCoins((prev) => ({
+              coinIN: { ...prev.coinIN, value: amounts.in },
+              coinOUT: { ...prev.coinOUT, value: amounts.out },
+              coinFiat: { ...prev.coinFiat, value: out },
+            }));
           }
         );
       });
-    }, 500),
-    []
+    }
   );
 
   const handleFetchEstimate = (amount: string, isToGetAmountsOut: boolean) => {
-    setCurrencys((prev) => ({
-      ...prev,
-      amountIN: isToGetAmountsOut ? amount : prev?.amountIN,
-      amountOUT: !isToGetAmountsOut ? amount : prev?.amountOUT,
-    }));
+    setCoins((prev) => {
+      if (isToGetAmountsOut) {
+        return { ...prev, coinIN: { ...prev.coinIN, value: amount } };
+      }
+
+      return { ...prev, coinOUT: { ...prev.coinOUT, value: amount } };
+    });
 
     debouncedHandleFetchEstimate(amount, isToGetAmountsOut);
   };
 
   const doSwap = async () => {
-    if (!walletClient || !address || !currencyOUT.value) return;
+    if (!walletClient || !address || !coins.coinOUT.value) return;
 
     try {
-      const amountInWei = parseEther(currencyIN.value as `${number}`);
-      const estimatedOutWei = parseEther(currencyOUT.value as `${number}`);
+      const amountInWei = parseEther(coins.coinIN.value as `${number}`);
+      const estimatedOutWei = parseEther(coins.coinOUT.value as `${number}`);
 
       const amountOutMin =
         estimatedOutWei -
@@ -120,7 +109,7 @@ export const useSwapHelper = () => {
         functionName: "swapExactETHForTokens",
         args: [
           amountOutMin,
-          [currencyIN.address, currencyOUT.address],
+          [coins.coinIN.address, coins.coinOUT.address],
           address as `0x${string}`,
           deadline,
         ],
@@ -137,18 +126,21 @@ export const useSwapHelper = () => {
   };
 
   const isButtonSwapDisable = useMemo(() => {
-    if (!isConnected || !currencyIN.value || !currencyOUT.value || !balanceIN)
+    if (
+      !isConnected ||
+      !coins.coinIN.value ||
+      !coins.coinOUT.value ||
+      !balanceIN
+    )
       return true;
 
     const formattedBalance = formatUnits(balanceIN.value, balanceIN.decimals);
 
-    return parseFloat(formattedBalance) < parseFloat(currencyIN.value);
-  }, [isConnected, currencyIN.value, currencyOUT.value, balanceIN]);
+    return parseFloat(formattedBalance) < parseFloat(coins.coinIN.value);
+  }, [isConnected, coins.coinIN.value, coins.coinOUT.value, balanceIN]);
 
   return {
-    currencyIN,
-    currencyOUT,
-    currencyUSD,
+    coins,
     slippage,
     isButtonSwapDisable,
     fetchEstimate: handleFetchEstimate,

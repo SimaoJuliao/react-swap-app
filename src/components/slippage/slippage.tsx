@@ -42,6 +42,7 @@ export const Slippage: React.FC<SlippageProps> = (props) => {
             border: "none",
             textAlign: "center",
             width: "auto",
+            padding: "0rem",
           }}
         />
         <span
