@@ -21,7 +21,7 @@ export const Swap: React.FC = () => {
 
   return (
     <Card>
-      <h2 style={{ fontSize: "1.75rem", textAlign: "center" }}>Swap</h2>
+      <h2 style={{ fontSize: "1.75rem", textAlign: "center", color:'#000' }}>Swap</h2>
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <ConnectButton showBalance chainStatus="icon" accountStatus="address" />
