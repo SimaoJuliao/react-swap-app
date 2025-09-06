@@ -5,6 +5,8 @@ import { useSwapHelper } from "./swap.hook";
 import { Slippage } from "../slippage";
 
 import { Arrow } from "../../assets";
+import { Card } from "../card";
+import { Button } from "../button";
 
 export const Swap: React.FC = () => {
   const {
@@ -18,21 +20,21 @@ export const Swap: React.FC = () => {
   } = useSwapHelper();
 
   return (
-    <div className="card">
-      <div className="card-header">Swap</div>
+    <Card>
+      <h2 style={{ fontSize: "1.75rem", textAlign: "center" }}>Swap</h2>
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <ConnectButton showBalance chainStatus="icon" accountStatus="address" />
       </div>
 
-      <div className="card-body">
+      <Card.Body>
         <p
           style={{
             color: "#7A6EAA",
             fontWeight: 600,
             lineHeight: 1.5,
-            fontSize: "12px",
-            margin: "0px",
+            fontSize: "0.75rem",
+            margin: "0rem",
           }}
         >
           From:
@@ -52,8 +54,8 @@ export const Swap: React.FC = () => {
             color: "#7A6EAA",
             fontWeight: 600,
             lineHeight: 1.5,
-            fontSize: "12px",
-            margin: "0px",
+            fontSize: "0.75rem",
+            margin: "0rem",
           }}
         >
           To:
@@ -65,20 +67,16 @@ export const Swap: React.FC = () => {
           fiatCoin={coins.coinFiat}
           onChange={(value) => fetchEstimate(value, false)}
         />
-      </div>
+      </Card.Body>
 
-      <div className="card-body">
+      <Card.Body>
         {/* Slippage */}
         <Slippage value={slippage} onChange={onChangeSlippage} />
 
-        <button
-          onClick={doSwap}
-          disabled={isButtonSwapDisable}
-          className="button"
-        >
+        <Button onClick={doSwap} isDisabled={isButtonSwapDisable}>
           Fazer Swap
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Card.Body>
+    </Card>
   );
 };

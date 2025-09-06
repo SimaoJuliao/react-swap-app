@@ -20,3 +20,5 @@ export const coinFiat = {
     blockchainName: 'BNB Chain',
     address: '0xe9e7cea3dedca5984780bafc599bd69add087d56' as AddressType,
 }
+
+export const PANCAKE_ROUTER_ADDRESS = "0x10ed43c718714eb63d5aa57b78b54704e256024e"; 

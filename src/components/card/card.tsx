@@ -5,15 +5,14 @@ type CardComponent = React.FC<React.PropsWithChildren> & {
 };
 
 const StyledCard = styled.div`
-  width: 100%;
-  maxwidth: 37.5rem;
-  backgroundcolor: #efedef;
-  borderradius: 1.25rem;
-  boxshadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  padding: 1.56rem;
+  max-width: 37.5rem;
+  background-color: #efedef;
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 25px;
   display: flex;
-  flexdirection: column;
-  gap: 1.25rem;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 export const Card: CardComponent = (props) => {
@@ -39,4 +38,3 @@ const CardBody: React.FC<React.PropsWithChildren> = (props) => {
 };
 
 Card.Body = CardBody;
-

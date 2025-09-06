@@ -12,7 +12,7 @@ export const Slippage: React.FC<SlippageProps> = (props) => {
     <div style={{ display: "flex", justifyContent: "space-between" }}>
       <a
         style={{
-          fontSize: "14px",
+          fontSize: "0.875rem",
           color: "#7A6EAA",
           textDecoration: "underline dotted",
         }}
@@ -23,7 +23,7 @@ export const Slippage: React.FC<SlippageProps> = (props) => {
         style={{
           backgroundColor: "#EFF4F5",
           padding: "0rem 0.5rem",
-          borderRadius: "12px",
+          borderRadius: "0.75rem",
           borderBottom: "2px solid rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -37,7 +37,7 @@ export const Slippage: React.FC<SlippageProps> = (props) => {
           style={{
             backgroundColor: "transparent",
             color: "#02919D",
-            fontSize: "14px",
+            fontSize: "0.875rem",
             fontWeight: 600,
             border: "none",
             textAlign: "center",
@@ -47,7 +47,7 @@ export const Slippage: React.FC<SlippageProps> = (props) => {
         />
         <span
           style={{
-            fontSize: "1rem",
+            fontSize: "0.875rem",
             fontWeight: 600,
             color: "#02919D",
           }}
