@@ -19,7 +19,6 @@ export const InputLabel: React.FC<InputLabelProps> = (props) => {
   const { label, balance } = props;
 
   const floatBalance = parseFloat(balance);
-  const formattedBalance = floatBalance < 0 ? "0" : floatBalance.toFixed(6);
 
   return (
     <div
@@ -32,10 +31,12 @@ export const InputLabel: React.FC<InputLabelProps> = (props) => {
     >
       <StyledText>{label}</StyledText>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-        <Wallet />
-        <StyledText>{formattedBalance}</StyledText>
-      </div>
+      {floatBalance > 0 && (
+        <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+          <Wallet />
+          <StyledText>{floatBalance.toFixed(6)}</StyledText>
+        </div>
+      )}
     </div>
   );
 };
