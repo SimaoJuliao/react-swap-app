@@ -7,11 +7,14 @@ import { Slippage } from "../slippage";
 import { Arrow } from "../../assets";
 import { Card } from "../card";
 import { Button } from "../button";
+import { InputLabel } from "../inputLabel";
 
 export const Swap: React.FC = () => {
   const {
     coins,
     slippage,
+    balance,
+    insufficientBalance,
     isButtonSwapDisable,
     fetchEstimate,
     onChangeSlippage,
@@ -21,24 +24,20 @@ export const Swap: React.FC = () => {
 
   return (
     <Card>
-      <h2 style={{ fontSize: "1.75rem", textAlign: "center", color:'#000' }}>Swap</h2>
+      <h2 style={{ fontSize: "1.75rem", textAlign: "center", color: "#000" }}>
+        Swap
+      </h2>
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <ConnectButton showBalance chainStatus="icon" accountStatus="address" />
+        <ConnectButton
+          showBalance={false}
+          chainStatus="icon"
+          accountStatus="address"
+        />
       </div>
 
       <Card.Body>
-        <p
-          style={{
-            color: "#7A6EAA",
-            fontWeight: 600,
-            lineHeight: 1.5,
-            fontSize: "0.75rem",
-            margin: "0rem",
-          }}
-        >
-          From:
-        </p>
+        <InputLabel label="From:" balance={balance.in} />
 
         {/* Input de BNB */}
         <InputAmount
@@ -49,17 +48,7 @@ export const Swap: React.FC = () => {
 
         <Arrow onClick={currencySwitch} />
 
-        <p
-          style={{
-            color: "#7A6EAA",
-            fontWeight: 600,
-            lineHeight: 1.5,
-            fontSize: "0.75rem",
-            margin: "0rem",
-          }}
-        >
-          To:
-        </p>
+        <InputLabel label="To:" balance={balance.out} />
 
         {/* Input de LCR */}
         <InputAmount
@@ -74,7 +63,11 @@ export const Swap: React.FC = () => {
         <Slippage value={slippage} onChange={onChangeSlippage} />
 
         <Button onClick={doSwap} isDisabled={isButtonSwapDisable}>
-          Fazer Swap
+          {!coins.coinOUT.value
+            ? "Enter an amount"
+            : insufficientBalance
+            ? "Insufficient Balance"
+            : "Swap"}
         </Button>
       </Card.Body>
     </Card>

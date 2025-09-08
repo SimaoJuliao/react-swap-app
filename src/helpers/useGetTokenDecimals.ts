@@ -1,6 +1,6 @@
 import { usePublicClient } from "wagmi";
 
-import erc20Abi from "../constants/erc20ABI.json";
+import { erc20Abi } from "../constants";
 import type { AddressType } from "../types";
 
 const decimalsCache = new Map<AddressType, number>();

@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import type { Coin } from "../../types";
+import type { CoinType } from "../../types";
 
 export interface InputAmountProps {
-  coin: Coin;
-  fiatCoin: Coin;
+  coin: CoinType;
+  fiatCoin: CoinType;
   onChange: (value: string) => void;
 }
 
@@ -47,9 +47,10 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
 
   const handleOnChange = (value: string) => {
     const regex = /^[0-9]*[.,]?[0-9]*$/;
+    const normalized = value.replace(",", ".");
 
-    if (value === "" || regex.test(value)) {
-      onChange(value);
+    if (normalized === "" || regex.test(normalized)) {
+      onChange(normalized);
     }
   };
 
@@ -62,7 +63,6 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
             alt={coin.name}
             loading="lazy"
             decoding="async"
-            fetchPriority="low"
           />
         )}
 
@@ -102,7 +102,7 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
           autoComplete="off"
           autoCorrect="off"
           type="text"
-          pattern="^[0-9]*[.,]?[0-9]*$"
+          pattern="/^[0-9]*[.,]?[0-9]*$"
           placeholder="0.00"
           minLength={1}
           maxLength={79}

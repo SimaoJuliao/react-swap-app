@@ -64,7 +64,7 @@ export const Arrow: React.FC<ArrowProps> = (props) => {
           r="18"
           fill="white"
           stroke="#ddd"
-          stroke-width="2"
+          strokeWidth="2"
         />
 
         {/* Arrow group */}

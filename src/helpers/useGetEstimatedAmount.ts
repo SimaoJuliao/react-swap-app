@@ -2,7 +2,7 @@ import { formatUnits } from "viem";
 import { usePublicClient } from "wagmi";
 
 import { PANCAKE_ROUTER_ADDRESS } from "../constants";
-import routerAbi from "../constants/pancakeRouterABI.json";
+import {routerAbi} from "../constants";
 import { formatAmountDynamic } from "./formatAmountDynamic";
 import type { AddressType } from "../types";
 import { useGetTokenDecimals } from "./useGetTokenDecimals";

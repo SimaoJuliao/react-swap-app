@@ -4,10 +4,11 @@ interface Window {
 
 export type AddressType = `0x${string}`;
 
-export interface Coin {
+export interface CoinType {
   value?: string | null;
   image: string;
   name: string;
   blockchainName: string;
   address: AddressType;
+  isNative: boolean;
 }
