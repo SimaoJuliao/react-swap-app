@@ -9,7 +9,6 @@ import type { CoinType } from "../../types";
 interface CoinsType {
   coinIN: CoinType;
   coinOUT: CoinType;
-  coinFiat: CoinType;
 }
 
 export const useSwapHelper = () => {
@@ -20,7 +19,6 @@ export const useSwapHelper = () => {
   const [coins, setCoins] = useState<CoinsType>({
     coinIN: { ...coinOne, value: null },
     coinOUT: { ...coinTwo, value: null },
-    coinFiat: { ...coinFiat, value: null },
   });
   const [slippage, setSlippage] = useState<number>(0.1);
 
@@ -48,33 +46,70 @@ export const useSwapHelper = () => {
   };
 
   const debouncedHandleFetchEstimate = debounce(
-    (amount: string, isToGetAmountsOut: boolean) => {
-      fetchEstimatedAmount(
+    async (amount: string, isToGetAmountsOut: boolean) => {
+      const { in: amountIN, out: amountOUT } = await fetchEstimatedAmount(
         amount,
         {
           in: coins.coinIN.address,
           out: coins.coinOUT.address,
         },
         isToGetAmountsOut
-      ).then((amounts) => {
-        const isLCR = coins.coinIN.address == coinTwo.address;
+      );
 
-        fetchEstimatedAmount(
-          isLCR ? amounts.out : amounts.in,
-          {
-            in: isLCR ? coins.coinOUT.address : coins.coinIN.address,
-            out: coins.coinFiat.address,
-          },
-          true,
-          ({ out }) => {
-            setCoins((prev) => ({
-              coinIN: { ...prev.coinIN, value: amounts.in },
-              coinOUT: { ...prev.coinOUT, value: amounts.out },
-              coinFiat: { ...prev.coinFiat, value: out },
-            }));
-          }
-        );
-      });
+      const { out: amountINFiat } = await fetchEstimatedAmount(
+        amountIN,
+        {
+          in: coins.coinIN.address,
+          out: coinFiat.address,
+        },
+        true
+      );
+
+      const { out: amountOUTFiat } = await fetchEstimatedAmount(
+        amountOUT,
+        {
+          in: coins.coinOUT.address,
+          out: coinFiat.address,
+        },
+        true
+      );
+
+      setCoins((prev) => ({
+        ...prev,
+        coinIN: { ...prev.coinIN, value: amountIN, fiatValue: amountINFiat },
+        coinOUT: {
+          ...prev.coinOUT,
+          value: amountOUT,
+          fiatValue: amountOUTFiat,
+        },
+      }));
+
+      // fetchEstimatedAmount(
+      //   amount,
+      //   {
+      //     in: coins.coinIN.address,
+      //     out: coins.coinOUT.address,
+      //   },
+      //   isToGetAmountsOut
+      // ).then((amounts) => {
+      //   const isLCR = coins.coinIN.address == coinTwo.address;
+
+      //   fetchEstimatedAmount(
+      //     isLCR ? amounts.out : amounts.in,
+      //     {
+      //       in: isLCR ? coins.coinOUT.address : coins.coinIN.address,
+      //       out: coins.coinFiat.address,
+      //     },
+      //     true,
+      //     ({ out }) => {
+      //       setCoins((prev) => ({
+      //         coinIN: { ...prev.coinIN, value: amounts.in },
+      //         coinOUT: { ...prev.coinOUT, value: amounts.out },
+      //         coinFiat: { ...prev.coinFiat, value: out },
+      //       }));
+      //     }
+      //   );
+      // });
     }
   );
 

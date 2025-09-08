@@ -2,10 +2,11 @@ import { formatUnits } from "viem";
 import { usePublicClient } from "wagmi";
 
 import { PANCAKE_ROUTER_ADDRESS } from "../constants";
-import {routerAbi} from "../constants";
+import { routerAbi } from "../constants";
 import { formatAmountDynamic } from "./formatAmountDynamic";
 import type { AddressType } from "../types";
 import { useGetTokenDecimals } from "./useGetTokenDecimals";
+import { useGetBestPath } from "./useGetBestPath";
 
 interface AmountsType {
   in: string | null;
@@ -14,8 +15,8 @@ interface AmountsType {
 
 export const useGetEstimatedAmount = () => {
   const publicClient = usePublicClient();
-
   const getTokenDecimals = useGetTokenDecimals();
+  const findBestPath = useGetBestPath();
 
   return async (
     amount: string | null,
@@ -33,19 +34,25 @@ export const useGetEstimatedAmount = () => {
 
     if (publicClient && amount && Number(amount) > 0) {
       try {
-        const tokenInDecimals = await getTokenDecimals(address.in);
-        const tokenOutDecimals = await getTokenDecimals(address.out);
+        // Get decimals
+        const [decimalsIn, decimalsOut] = await Promise.all([
+          getTokenDecimals(address.in),
+          getTokenDecimals(address.out),
+        ]);
 
         // Convert amount to bigint based on correct decimals
         const amountBigInt = BigInt(
           Math.floor(
             Number(amount) *
-              10 ** (isToGetAmountsOut ? tokenInDecimals : tokenOutDecimals)
+              10 ** (isToGetAmountsOut ? decimalsIn : decimalsOut)
           )
         );
 
         // Swap Path (always IN → OUT)
-        const path = [address.in, address.out];
+        const path = await findBestPath(amountBigInt, [
+          address.in,
+          address.out,
+        ]);
 
         const amounts = await publicClient.readContract({
           address: PANCAKE_ROUTER_ADDRESS,
@@ -54,13 +61,13 @@ export const useGetEstimatedAmount = () => {
           args: [amountBigInt, path],
         });
 
-        const outFormatted = formatUnits(
-          (amounts as bigint[])[1],
-          tokenOutDecimals as number
-        );
         const inFormatted = formatUnits(
           (amounts as bigint[])[0],
-          tokenInDecimals as number
+          decimalsIn as number
+        );
+        const outFormatted = formatUnits(
+          (amounts as bigint[])[amounts.length - 1],
+          decimalsOut as number
         );
 
         amountsValue = {

@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import type { CoinType } from "../../types";
+import { coinFiat } from "../../constants";
 
 export interface InputAmountProps {
   coin: CoinType;
-  fiatCoin: CoinType;
   onChange: (value: string) => void;
 }
 
@@ -43,7 +43,7 @@ const StyledImage = styled.img`
 `;
 
 export const InputAmount: React.FC<InputAmountProps> = (props) => {
-  const { coin, fiatCoin, onChange } = props;
+  const { coin, onChange } = props;
 
   const handleOnChange = (value: string) => {
     const regex = /^[0-9]*[.,]?[0-9]*$/;
@@ -119,7 +119,7 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
             lineHeight: 1.5,
           }}
         >
-          ~ {fiatCoin.value || "0.00"} {fiatCoin.name}
+          ~ {coin.fiatValue || "0.00"} {coinFiat.name}
         </label>
       </div>
     </StyledContainer>

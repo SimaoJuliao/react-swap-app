@@ -60,7 +60,7 @@ export const useSwap = () => {
     const isNativeIn = coinIN.isNative;
 
     try {
-      // 1. Get decimals
+      // Get decimals
       const [decimalsIn, decimalsOut] = await Promise.all([
         getTokenDecimals(coinIN.address),
         getTokenDecimals(coinOUT.address),

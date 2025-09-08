@@ -42,7 +42,6 @@ export const Swap: React.FC = () => {
         {/* Input de BNB */}
         <InputAmount
           coin={coins.coinIN}
-          fiatCoin={coins.coinFiat}
           onChange={(value) => fetchEstimate(value, true)}
         />
 
@@ -53,7 +52,6 @@ export const Swap: React.FC = () => {
         {/* Input de LCR */}
         <InputAmount
           coin={coins.coinOUT}
-          fiatCoin={coins.coinFiat}
           onChange={(value) => fetchEstimate(value, false)}
         />
       </Card.Body>
