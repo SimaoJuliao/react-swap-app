@@ -6,26 +6,31 @@ interface ButtonProps {
 }
 
 const StyledButton = styled.button`
-  padding: 15px;
-  background-color: #0e76fd;
-  color: white;
-  border: none;
-  border-radius: 1rem;
-  font-weight: bold;
-  font-size: 1.25rem;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  width: 100%;
-  margin-top: 0.75rem;
+  && {
+    padding: 0.937rem;
+    background-color: #0e76fd;
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    margin-top: 0.75rem;
+    font-family: "Kanit", sans-serif;
 
-  &:disabled {
-    cursor: not-allowed;
-    background-color: #e9eaeb;
-    color: #bdc2c4;
+    &:disabled {
+      cursor: not-allowed;
+      background-color: #e9eaeb;
+      color: #bdc2c4;
+    }
   }
 `;
 
-export const Button: React.FC<React.PropsWithChildren<ButtonProps>> = (props) => {
+export const Button: React.FC<React.PropsWithChildren<ButtonProps>> = (
+  props
+) => {
   const { children, isDisabled, onClick } = props;
 
   return (

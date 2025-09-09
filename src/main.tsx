@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Toaster } from "react-hot-toast";
 import App from "./App";
 import { WagmiProviderWrapper } from "./providers";
 import "./App.css"; // Importe o arquivo CSS
@@ -11,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <React.StrictMode>
         <WagmiProviderWrapper>
           <App />
+          <Toaster />
         </WagmiProviderWrapper>
       </React.StrictMode>
     );

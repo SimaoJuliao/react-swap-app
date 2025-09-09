@@ -7,6 +7,7 @@ import { formatAmountDynamic } from "./formatAmountDynamic";
 import type { AddressType } from "../types";
 import { useGetTokenDecimals } from "./useGetTokenDecimals";
 import { useGetBestPath } from "./useGetBestPath";
+import toast from "react-hot-toast";
 
 interface AmountsType {
   in: string | null;
@@ -75,7 +76,7 @@ export const useGetEstimatedAmount = () => {
           out: isToGetAmountsOut ? formatAmountDynamic(outFormatted) : amount,
         };
       } catch (error) {
-        console.error("Erro ao calcular estimativa:", error);
+        toast.error("Erro ao calcular estimativa");
       }
     }
 

@@ -5,6 +5,7 @@ import { coinOne, coinTwo, coinFiat } from "../../constants";
 import { useGetBalance, useGetEstimatedAmount, useSwap } from "../../helpers";
 import { debounce } from "lodash";
 import type { CoinType } from "../../types";
+import toast from "react-hot-toast";
 
 interface CoinsType {
   coinIN: CoinType;
@@ -16,6 +17,7 @@ export const useSwapHelper = () => {
   const fetchEstimatedAmount = useGetEstimatedAmount();
   const { swapTokens } = useSwap();
   const requestIdRef = useRef(0);
+  const loadingId = useRef("");
 
   const [coins, setCoins] = useState<CoinsType>({
     coinIN: { ...coinOne, value: null },
@@ -57,6 +59,8 @@ export const useSwapHelper = () => {
           coinOUT: { ...prev.coinOUT, value: "", fiatValue: "" },
         }));
 
+        loadingId.current = "";
+        toast.dismiss();
         return;
       }
 
@@ -107,6 +111,9 @@ export const useSwapHelper = () => {
 
         return updated;
       });
+
+      loadingId.current = "";
+      toast.dismiss();
     },
     300
   );
@@ -115,6 +122,10 @@ export const useSwapHelper = () => {
     // generate a new request ID
     const newRequestId = Date.now();
     requestIdRef.current = newRequestId;
+
+    if (!loadingId.current) {
+      loadingId.current = toast.loading("A calcular...");
+    }
 
     setCoins((prev) => {
       const updated = { ...prev };

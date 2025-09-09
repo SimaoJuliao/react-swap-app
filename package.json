@@ -15,6 +15,7 @@
     "lodash": "^4.17.21",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hot-toast": "^2.6.0",
     "styled-components": "^6.1.19",
     "viem": "^2.37.3",
     "wagmi": "^2.16.9"

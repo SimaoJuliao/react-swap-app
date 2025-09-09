@@ -8,17 +8,19 @@ export interface InputAmountProps {
 }
 
 const StyledContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 1.5rem;
-  background-color: #eeeaf4;
-  padding: 0rem 1rem;
-  height: 5rem;
-  gap: 1rem;
+  && {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 1.5rem;
+    background-color: #eeeaf4;
+    padding: 0rem 1rem;
+    height: 5rem;
+    gap: 1rem;
 
-  &:focus-within {
-    box-shadow: 0 0 0 3px #a56bff;
+    &:focus-within {
+      box-shadow: 0 0 0 3px #a56bff;
+    }
   }
 `;
 

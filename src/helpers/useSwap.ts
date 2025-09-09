@@ -5,6 +5,7 @@ import { routerAbi } from "../constants";
 import type { AddressType, CoinType } from "../types";
 import { useGetTokenDecimals } from "./useGetTokenDecimals";
 import { useGetEstimatedAmount } from "./useGetEstimatedAmount";
+import toast from "react-hot-toast";
 
 export const useSwap = () => {
   const { data: walletClient } = useWalletClient();
@@ -43,9 +44,10 @@ export const useSwap = () => {
         account: address,
       });
 
+      toast.success("Token approvado com sucesso");
       return true;
     } catch (e) {
-      console.error("Erro ao aprovar token:", e);
+      toast.error("Erro ao aprovar token");
       return false;
     }
   };
@@ -118,28 +120,25 @@ export const useSwap = () => {
       });
 
       // Send transaction
-      const txHash = await walletClient.writeContract(request);
+      await walletClient.writeContract(request);
 
-      console.log("Tx enviada:", txHash);
-      alert("Swap iniciado! Tx Hash: " + txHash);
+      toast.success("Swap Done!");
     } catch (e: any) {
-      console.error("Erro no swap:", e);
-
       // Tratamento de erros comuns
       const msg = e?.message || "";
       if (
         msg.includes("INSUFFICIENT_OUTPUT_AMOUNT") ||
         msg.includes("PancakeRouter: INSUFFICIENT_OUTPUT_AMOUNT")
       ) {
-        alert(
+        toast.error(
           "Slippage muito baixo ou liquidez insuficiente. Tente aumentar o slippage."
         );
       } else if (msg.includes("TRANSFER_FROM_FAILED")) {
-        alert(
+        toast.error(
           "Falha na transferência do token. Confirme se você autorizou o token corretamente."
         );
       } else {
-        alert("Swap falhou: " + msg);
+        toast.error("Swap falhou");
       }
     }
   };
