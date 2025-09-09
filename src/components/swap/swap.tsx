@@ -13,6 +13,7 @@ export const Swap: React.FC = () => {
   const {
     coins,
     slippage,
+    loading,
     balance,
     insufficientBalance,
     isButtonSwapDisable,
@@ -42,16 +43,21 @@ export const Swap: React.FC = () => {
         {/* Input de BNB */}
         <InputAmount
           coin={coins.coinIN}
+          loading={loading.in}
           onChange={(value) => fetchEstimate(value, true)}
         />
 
-        <Arrow onClick={currencySwitch} />
+        <Arrow
+          isDisabled={loading.in || loading.out}
+          onClick={currencySwitch}
+        />
 
         <InputLabel label="To:" balance={balance.out} />
 
         {/* Input de LCR */}
         <InputAmount
           coin={coins.coinOUT}
+          loading={loading.out}
           onChange={(value) => fetchEstimate(value, false)}
         />
       </Card.Body>

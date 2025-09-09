@@ -1,15 +1,16 @@
 import React, { useRef } from "react";
 
 interface ArrowProps {
+  isDisabled?: boolean;
   onClick?: () => void;
 }
 
 export const Arrow: React.FC<ArrowProps> = (props) => {
-  const { onClick } = props;
+  const { isDisabled = false, onClick } = props;
   const arrowRef = useRef<SVGGElement>(null);
 
   const handleClick = () => {
-    if (!arrowRef.current) return;
+    if (!arrowRef.current || isDisabled) return;
 
     onClick?.();
 

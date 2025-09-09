@@ -44,7 +44,7 @@ export const useSwap = () => {
         account: address,
       });
 
-      toast.success("Token approvado com sucesso");
+      toast.success("Token approved successfully");
       return true;
     } catch (e) {
       return false;
@@ -121,7 +121,7 @@ export const useSwap = () => {
       // Send transaction
       await walletClient.writeContract(request);
 
-      toast.success("Swap Done!");
+      toast.success("Transaction receipt");
     } catch (e: any) {
       // Tratamento de erros comuns
       const msg = e?.message || "";
@@ -130,14 +130,14 @@ export const useSwap = () => {
         msg.includes("PancakeRouter: INSUFFICIENT_OUTPUT_AMOUNT")
       ) {
         toast.error(
-          "Slippage muito baixo ou liquidez insuficiente. Tente aumentar o slippage."
+          "Slippage is too low or liquidity is insufficient. Try increasing slippage"
         );
       } else if (msg.includes("TRANSFER_FROM_FAILED")) {
         toast.error(
-          "Falha na transferência do token. Confirme se você autorizou o token corretamente."
+          "Token transfer failed. Please confirm that you authorized the token correctly"
         );
       } else {
-        toast.error("Swap falhou");
+        toast.error("Transaction rejected");
       }
     }
   };

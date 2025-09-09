@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from "react";
 import { useAccount } from "wagmi";
-import toast from "react-hot-toast";
 
 import { coinOne, coinTwo, coinFiat } from "../../constants";
 import { useGetBalance, useGetEstimatedAmount, useSwap } from "../../helpers";
@@ -12,18 +11,34 @@ interface CoinsType {
   coinOUT: CoinType;
 }
 
+interface LoadingType {
+  in: boolean;
+  out: boolean;
+}
+
+interface SwapState {
+  coins: CoinsType;
+  slippage: number;
+  loading: LoadingType;
+}
+
 export const useSwapHelper = () => {
   const { isConnected } = useAccount();
   const fetchEstimatedAmount = useGetEstimatedAmount();
   const { swapTokens } = useSwap();
   const requestIdRef = useRef(0);
-  const loadingId = useRef("");
 
-  const [coins, setCoins] = useState<CoinsType>({
-    coinIN: { ...coinOne, value: null },
-    coinOUT: { ...coinTwo, value: null },
+  const [{ coins, slippage, loading }, setSwapState] = useState<SwapState>({
+    coins: {
+      coinIN: { ...coinOne, value: null },
+      coinOUT: { ...coinTwo, value: null },
+    },
+    loading: {
+      in: false,
+      out: false,
+    },
+    slippage: 0.1,
   });
-  const [slippage, setSlippage] = useState<number>(0.1);
 
   const balance = useGetBalance({
     coinIN: coins.coinIN,
@@ -37,14 +52,13 @@ export const useSwapHelper = () => {
   }, [coins.coinIN.value, balance]);
 
   const handleOnChangeSlippage = (value: number) => {
-    setSlippage(value);
+    setSwapState((prev) => ({ ...prev, slippage: value }));
   };
 
   const handleCurrencySwitch = () => {
-    setCoins((prev) => ({
+    setSwapState((prev) => ({
       ...prev,
-      coinIN: prev.coinOUT,
-      coinOUT: prev.coinIN,
+      coins: { coinIN: prev.coins.coinOUT, coinOUT: prev.coins.coinIN },
     }));
   };
 
@@ -52,26 +66,32 @@ export const useSwapHelper = () => {
     async (amount: string, isToGetAmountsOut: boolean, requestId: number) => {
       const isValidAmount = parseFloat(amount) > 0;
 
+      // Abort if this request is not the most recent one
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
       // If the amount is invalid, reset the coin values
       if (!isValidAmount) {
-        setCoins((prev) => {
+        setSwapState((prev) => {
           const [targetCoin, oppositeCoin]: [keyof CoinsType, keyof CoinsType] =
             isToGetAmountsOut ? ["coinIN", "coinOUT"] : ["coinOUT", "coinIN"];
 
           return {
             ...prev,
-            [oppositeCoin]: { ...prev[oppositeCoin], value: "", fiatValue: "" },
-            [targetCoin]: { ...prev[targetCoin], fiatValue: "" },
+            coins: {
+              ...prev.coins,
+              [oppositeCoin]: {
+                ...prev.coins[oppositeCoin],
+                value: "",
+                fiatValue: "",
+              },
+              [targetCoin]: { ...prev.coins[targetCoin], fiatValue: "" },
+            },
+            loading: { in: false, out: false },
           };
         });
 
-        toast.dismiss(loadingId.current);
-        loadingId.current = "";
-        return;
-      }
-
-      // Abort if this request is not the most recent one
-      if (requestId !== requestIdRef.current) {
         return;
       }
 
@@ -111,24 +131,23 @@ export const useSwapHelper = () => {
       }
 
       // Update the coin values based on the fetched estimates
-      setCoins((prev) => {
+      setSwapState((prev) => {
         const updated = { ...prev };
 
         if (isToGetAmountsOut) {
-          updated.coinIN.fiatValue = amountINFiat;
-          updated.coinOUT.value = amountOUT;
-          updated.coinOUT.fiatValue = amountOUTFiat;
+          updated.coins.coinIN.fiatValue = amountINFiat;
+          updated.coins.coinOUT.value = amountOUT;
+          updated.coins.coinOUT.fiatValue = amountOUTFiat;
         } else {
-          updated.coinIN.value = amountIN;
-          updated.coinIN.fiatValue = amountINFiat;
-          updated.coinOUT.fiatValue = amountOUTFiat;
+          updated.coins.coinIN.value = amountIN;
+          updated.coins.coinIN.fiatValue = amountINFiat;
+          updated.coins.coinOUT.fiatValue = amountOUTFiat;
         }
+
+        updated.loading = { in: false, out: false };
 
         return updated;
       });
-
-      toast.dismiss(loadingId.current);
-      loadingId.current = "";
     },
     300
   );
@@ -138,19 +157,18 @@ export const useSwapHelper = () => {
     const newRequestId = Date.now();
     requestIdRef.current = newRequestId;
 
-    // Show the loading toast if it's not already showing
-    if (!loadingId.current) {
-      loadingId.current = toast.loading("A calcular...");
-    }
-
     // Update the coins state with the new amount
-    setCoins((prev) => {
+    setSwapState((prev) => {
       const updated = { ...prev };
 
       if (isToGetAmountsOut) {
-        updated.coinIN.value = amount;
+        updated.coins.coinIN.value = amount;
       } else {
-        updated.coinOUT.value = amount;
+        updated.coins.coinOUT.value = amount;
+      }
+
+      if (!loading.in && !loading.out) {
+        updated.loading = { in: !isToGetAmountsOut, out: isToGetAmountsOut };
       }
 
       return updated;
@@ -167,6 +185,7 @@ export const useSwapHelper = () => {
   return {
     coins,
     slippage,
+    loading,
     balance,
     insufficientBalance,
     isButtonSwapDisable:

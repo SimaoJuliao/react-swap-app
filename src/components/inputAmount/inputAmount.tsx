@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import type { CoinType } from "../../types";
 import { coinFiat } from "../../constants";
+import { MoonLoader } from "react-spinners";
 
 export interface InputAmountProps {
   coin: CoinType;
+  loading: boolean;
   onChange: (value: string) => void;
 }
 
@@ -45,7 +47,7 @@ const StyledImage = styled.img`
 `;
 
 export const InputAmount: React.FC<InputAmountProps> = (props) => {
-  const { coin, onChange } = props;
+  const { coin, loading, onChange } = props;
 
   const handleOnChange = (value: string) => {
     const regex = /^[0-9]*[.,]?[0-9]*$/;
@@ -98,31 +100,37 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
           alignItems: "flex-end",
         }}
       >
-        <StyledInput
-          inputMode="decimal"
-          title="Token Amount"
-          autoComplete="off"
-          autoCorrect="off"
-          type="text"
-          pattern="/^[0-9]*[.,]?[0-9]*$"
-          placeholder="0.00"
-          minLength={1}
-          maxLength={79}
-          spellCheck={false}
-          value={coin.value || ""}
-          onChange={(e) => handleOnChange(e.target.value)}
-        />
+        {loading ? (
+          <MoonLoader loading={loading} size={20} />
+        ) : (
+          <StyledInput
+            inputMode="decimal"
+            title="Token Amount"
+            autoComplete="off"
+            autoCorrect="off"
+            type="text"
+            pattern="/^[0-9]*[.,]?[0-9]*$"
+            placeholder="0.00"
+            minLength={1}
+            maxLength={79}
+            spellCheck={false}
+            value={coin.value || ""}
+            onChange={(e) => handleOnChange(e.target.value)}
+          />
+        )}
 
-        <label
-          style={{
-            color: "#7A6EAA",
-            fontSize: "14px",
-            fontWeight: 400,
-            lineHeight: 1.5,
-          }}
-        >
-          ~ {coin.fiatValue || "0.00"} {coinFiat.name}
-        </label>
+        {!loading && (
+          <label
+            style={{
+              color: "#7A6EAA",
+              fontSize: "14px",
+              fontWeight: 400,
+              lineHeight: 1.5,
+            }}
+          >
+            ~ {coin.fiatValue || "0.00"} {coinFiat.name}
+          </label>
+        )}
       </div>
     </StyledContainer>
   );
