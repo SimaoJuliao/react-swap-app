@@ -11,6 +11,8 @@ export const Slippage: React.FC<SlippageProps> = (props) => {
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
       <a
+        data-tooltip-id="slippage-tooltip"
+        data-tooltip-content="Permissible price deviation (%) between quoted and execution price of swap. For cross-chain swaps, this applies separately to both source and destination chains."
         style={{
           fontSize: "0.875rem",
           color: "#7A6EAA",
@@ -19,6 +21,7 @@ export const Slippage: React.FC<SlippageProps> = (props) => {
       >
         Slippage Tolerance (%)
       </a>
+
       <div
         style={{
           backgroundColor: "#EFF4F5",
