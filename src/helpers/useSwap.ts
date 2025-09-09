@@ -47,7 +47,6 @@ export const useSwap = () => {
       toast.success("Token approvado com sucesso");
       return true;
     } catch (e) {
-      toast.error("Erro ao aprovar token");
       return false;
     }
   };

@@ -1,11 +1,11 @@
 import { useMemo, useRef, useState } from "react";
 import { useAccount } from "wagmi";
+import toast from "react-hot-toast";
 
 import { coinOne, coinTwo, coinFiat } from "../../constants";
 import { useGetBalance, useGetEstimatedAmount, useSwap } from "../../helpers";
 import { debounce } from "lodash";
 import type { CoinType } from "../../types";
-import toast from "react-hot-toast";
 
 interface CoinsType {
   coinIN: CoinType;
@@ -52,23 +52,30 @@ export const useSwapHelper = () => {
     async (amount: string, isToGetAmountsOut: boolean, requestId: number) => {
       const isValidAmount = parseFloat(amount) > 0;
 
+      // If the amount is invalid, reset the coin values
       if (!isValidAmount) {
-        setCoins((prev) => ({
-          ...prev,
-          coinIN: { ...prev.coinIN, value: "", fiatValue: "" },
-          coinOUT: { ...prev.coinOUT, value: "", fiatValue: "" },
-        }));
+        setCoins((prev) => {
+          const [targetCoin, oppositeCoin]: [keyof CoinsType, keyof CoinsType] =
+            isToGetAmountsOut ? ["coinIN", "coinOUT"] : ["coinOUT", "coinIN"];
 
+          return {
+            ...prev,
+            [oppositeCoin]: { ...prev[oppositeCoin], value: "", fiatValue: "" },
+            [targetCoin]: { ...prev[targetCoin], fiatValue: "" },
+          };
+        });
+
+        toast.dismiss(loadingId.current);
         loadingId.current = "";
-        toast.dismiss();
         return;
       }
 
-      // Cancel if not the most recent order
+      // Abort if this request is not the most recent one
       if (requestId !== requestIdRef.current) {
         return;
       }
 
+      // Fetch the estimated amount for the swap
       const { in: amountIN, out: amountOUT } = await fetchEstimatedAmount(
         amount,
         {
@@ -78,6 +85,7 @@ export const useSwapHelper = () => {
         isToGetAmountsOut
       );
 
+      // Fetch the fiat value of the input coin
       const { out: amountINFiat } = await fetchEstimatedAmount(
         amountIN,
         {
@@ -87,6 +95,7 @@ export const useSwapHelper = () => {
         true
       );
 
+      // Fetch the fiat value of the output coin
       const { out: amountOUTFiat } = await fetchEstimatedAmount(
         amountOUT,
         {
@@ -96,6 +105,12 @@ export const useSwapHelper = () => {
         true
       );
 
+      // Abort if this request is not the most recent one
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      // Update the coin values based on the fetched estimates
       setCoins((prev) => {
         const updated = { ...prev };
 
@@ -112,8 +127,8 @@ export const useSwapHelper = () => {
         return updated;
       });
 
+      toast.dismiss(loadingId.current);
       loadingId.current = "";
-      toast.dismiss();
     },
     300
   );
@@ -123,10 +138,12 @@ export const useSwapHelper = () => {
     const newRequestId = Date.now();
     requestIdRef.current = newRequestId;
 
+    // Show the loading toast if it's not already showing
     if (!loadingId.current) {
       loadingId.current = toast.loading("A calcular...");
     }
 
+    // Update the coins state with the new amount
     setCoins((prev) => {
       const updated = { ...prev };
 
@@ -139,6 +156,7 @@ export const useSwapHelper = () => {
       return updated;
     });
 
+    // Only proceed with fetching the estimate if the amount is valid
     debouncedHandleFetchEstimate(amount, isToGetAmountsOut, newRequestId);
   };
 

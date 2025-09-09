@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <React.StrictMode>
         <WagmiProviderWrapper>
           <App />
-          <Toaster />
+          <Toaster containerStyle={{ position: 'fixed',top: "2.5rem" }} />
         </WagmiProviderWrapper>
       </React.StrictMode>
     );
