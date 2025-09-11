@@ -6,20 +6,6 @@
   font-family: 'Kanit', sans-serif;
 }
 
-/* Remove setas no Chrome, Safari, Edge, Opera */
-#root-react-app input[type="number"] {
-  appearance: textfield; /* padrão, para maior compatibilidade */
-  -moz-appearance: textfield;
-  -webkit-appearance: none;
-}
-
-/* Remove as setas no Chrome, Safari, etc. */
-#root-react-app input[type="number"]::-webkit-inner-spin-button,
-#root-react-app input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 #root-react-app input:focus {
   outline: none;
   border: none;

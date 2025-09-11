@@ -26,6 +26,41 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledImage = styled.img`
+  && {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.25rem;
+  }
+`;
+
+const CoinName = styled.label`
+  && {
+    color: #280d5f;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+`;
+
+const SubLabel = styled.span`
+  && {
+    color: #7a6eaa;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+`;
+
+const InputWrapper = styled.div`
+  && {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 4.5rem;
+    flex-grow: 1;
+  }
+`;
+
 const StyledInput = styled.input`
   && {
     background-color: transparent;
@@ -33,16 +68,9 @@ const StyledInput = styled.input`
     font-weight: 600;
     border: none;
     text-align: right;
-    width: auto;
+    width: 100%;
     max-width: 10ch;
     padding: 0rem;
-  }
-`;
-
-const StyledImage = styled.img`
-  && {
-    width: 1.5rem;
-    height: 1.5rem;
   }
 `;
 
@@ -71,45 +99,23 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
         )}
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label
-            style={{
-              color: "#280D5F",
-              fontSize: "20px",
-              fontWeight: 600,
-            }}
-          >
-            {coin.name}
-          </label>
-          <label
-            style={{
-              color: "#7A6EAA",
-              fontSize: "13px",
-              lineHeight: 1.5,
-              fontWeight: 400,
-            }}
-          >
-            {coin.blockchainName}
-          </label>
+          <CoinName htmlFor={`amount-input-${coin.name}`}>{coin.name}</CoinName>
+          <SubLabel>{coin.blockchainName}</SubLabel>
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-        }}
-      >
+      <InputWrapper>
         {loading ? (
           <MoonLoader loading={loading} size={20} />
         ) : (
           <StyledInput
+            id={`amount-input-${coin.name}`}
             inputMode="decimal"
             title="Token Amount"
             autoComplete="off"
             autoCorrect="off"
             type="text"
-            pattern="/^[0-9]*[.,]?[0-9]*$"
+            pattern="[0-9]*[.,]?[0-9]*"
             placeholder="0.00"
             minLength={1}
             maxLength={79}
@@ -120,18 +126,11 @@ export const InputAmount: React.FC<InputAmountProps> = (props) => {
         )}
 
         {!loading && (
-          <label
-            style={{
-              color: "#7A6EAA",
-              fontSize: "14px",
-              fontWeight: 400,
-              lineHeight: 1.5,
-            }}
-          >
+          <SubLabel>
             ~ {coin.fiatValue || "0.00"} {coinFiat.name}
-          </label>
+          </SubLabel>
         )}
-      </div>
+      </InputWrapper>
     </StyledContainer>
   );
 };

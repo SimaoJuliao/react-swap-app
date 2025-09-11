@@ -1,24 +1,47 @@
-# React + TypeScript + Vite
+# 🥞 BNB Swap App
 
-testar Swap com a testnet da BSC
+**BNB Swap App** is a lightweight, modern dApp built with React for swapping tokens on the **Binance Smart Chain (BSC)**. It uses **PancakeSwap** as the routing protocol and integrates wallet connections via **RainbowKit** and **Wagmi**.
 
+---
 
-🚀 Próximos passos (opcionais)
+## ⚙️ Tech Stack
+- **React 19** – Core frontend library  
+- **Vite** – Lightning-fast dev/build tool  
+- **Wagmi + Viem** – Simplified and type-safe Web3 integration  
+- **RainbowKit** – Beautiful wallet connection UI  
+- **Styled Components** – Component-scoped dynamic styling  
 
-Comissões altas -> implementar o approve e o allowance e assim (Done)
+---
 
-Colocar as quantidades de moeda que se tem na wallet (Done)
+## 🚀 Key Features
+- 🔐 Connect with popular wallets (MetaMask, WalletConnect, etc.)  
+- 🔄 Swap tokens using a defined routing token (e.g., WBNB via PancakeSwap)  
+- ✅ Easily configurable list of supported tokens  
+- 🧼 Clean, minimal UI optimized for speed and usability  
+- 🎉 Instant feedback with animations and toast notifications  
 
-Existe o par LCR/BUSD para fazer logo a converção para dollares (Done)
+---
 
-Adicionar alertas de sucesso e erro (Done)
+## 🧪 Getting Started
 
-Adicionar tooltip no Slippage (Done)
+**Install dependencies**  
 
-Colocar Loading nos preços (Done)
+```npm install```
 
-colocar o texto todo em ingles alerta e tudo (Done)
+**Start the development server**  
 
-Melhorar animação da arrow 
+```npm run dev``` 
 
-colocar imagem da blockchain correspondente á moeda -> https://assets.pancakeswap.finance/web/chains/square/56.svg
+---
+
+## 🛠️ Production Build
+
+To create a production-ready build:  
+
+```npm run build```
+
+To preview the build locally:  
+
+```npm run preview```
+
+---

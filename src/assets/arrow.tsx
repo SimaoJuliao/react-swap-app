@@ -8,21 +8,38 @@ interface ArrowProps {
 export const Arrow: React.FC<ArrowProps> = (props) => {
   const { isDisabled = false, onClick } = props;
   const arrowRef = useRef<SVGGElement>(null);
+  const circleRef = useRef<SVGCircleElement>(null);
 
   const handleClick = () => {
-    if (!arrowRef.current || isDisabled) return;
+    if (isDisabled) return;
 
     onClick?.();
+
+    if (!arrowRef.current || !circleRef.current) return;
+
+    circleRef.current.animate(
+      [
+        { filter: "drop-shadow(0 0 0px #00cbe7)" },
+        { filter: "drop-shadow(0 0 6px #00cbe7)" },
+        { filter: "drop-shadow(0 0 0px #00cbe7)" },
+      ],
+      {
+        duration: 400,
+        easing: "ease-in-out",
+      }
+    );
 
     arrowRef.current.animate(
       [
         { transform: "rotate(90deg)", transformOrigin: "center" },
         { transform: "rotate(-90deg)", transformOrigin: "center" },
         { transform: "rotate(90deg)", transformOrigin: "center" },
+        { transform: "rotate(150deg)", transformOrigin: "center" },
+        { transform: "rotate(90deg)", transformOrigin: "center" },
       ],
       {
-        duration: 800,
-        easing: "ease-in-out",
+        duration: 1000,
+        easing: "ease-out",
       }
     );
   };
@@ -60,6 +77,7 @@ export const Arrow: React.FC<ArrowProps> = (props) => {
         onClick={handleClick}
       >
         <circle
+          ref={circleRef}
           cx="20"
           cy="20"
           r="18"
