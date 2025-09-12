@@ -1,10 +1,11 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 
 import { coinOne, coinTwo, coinFiat } from "../../constants";
 import { useGetBalance, useGetEstimatedAmount, useSwap } from "../../helpers";
 import { debounce } from "lodash";
 import type { CoinType } from "../../types";
+import toast from "react-hot-toast";
 
 interface CoinsType {
   coinIN: CoinType;
@@ -50,6 +51,20 @@ export const useSwapHelper = () => {
 
     return parseFloat(balance.in) < parseFloat(coins.coinIN.value);
   }, [coins.coinIN.value, balance]);
+
+  useEffect(() => {
+    if (isConnected) {
+      toast.success("Wallet conected");
+    }
+  }, [isConnected]);
+
+  const handleOnConnectWallet = () => {
+    if (!isConnected) {
+      toast(
+        "If you connect via WalletConnect (QR Code), you may need to refresh the page after accepting"
+      );
+    }
+  };
 
   const handleOnChangeSlippage = (value: number) => {
     setSwapState((prev) => ({ ...prev, slippage: value }));
@@ -178,8 +193,20 @@ export const useSwapHelper = () => {
     debouncedHandleFetchEstimate(amount, isToGetAmountsOut, newRequestId);
   };
 
-  const handleSwap = () => {
-    swapTokens(coins.coinIN, coins.coinOUT, slippage);
+  const handleSwap = async () => {
+    toast("Check your wallet and approve the request to continue");
+    const result = await swapTokens(coins.coinIN, coins.coinOUT, slippage);
+
+    if (result) {
+      setSwapState((prev) => ({
+        ...prev,
+        coins: {
+          coinIN: { ...prev.coins.coinIN, value: null },
+          coinOUT: { ...prev.coins.coinOUT, value: null },
+        },
+      }));
+      balance.refetch();
+    }
   };
 
   return {
@@ -190,6 +217,7 @@ export const useSwapHelper = () => {
     insufficientBalance,
     isButtonSwapDisable:
       !isConnected || !coins.coinOUT.value || insufficientBalance,
+    onConnectWallet: handleOnConnectWallet,
     fetchEstimate: handleFetchEstimate,
     onChangeSlippage: handleOnChangeSlippage,
     currencySwitch: handleCurrencySwitch,

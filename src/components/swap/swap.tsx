@@ -17,6 +17,7 @@ export const Swap: React.FC = () => {
     balance,
     insufficientBalance,
     isButtonSwapDisable,
+    onConnectWallet,
     fetchEstimate,
     onChangeSlippage,
     currencySwitch,
@@ -29,11 +30,14 @@ export const Swap: React.FC = () => {
         Swap
       </h2>
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div
+        style={{ display: "flex", justifyContent: "flex-end" }}
+        onClick={onConnectWallet}
+      >
         <ConnectButton
           showBalance={false}
-          chainStatus="icon"
-          accountStatus="address"
+          chainStatus="full"
+          accountStatus="full"
         />
       </div>
 

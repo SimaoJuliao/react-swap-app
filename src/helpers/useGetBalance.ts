@@ -10,7 +10,7 @@ export const useGetBalance = (props: BalanceProps) => {
   const { coinIN, coinOUT } = props;
   const { address } = useAccount();
 
-  const { data: balanceIN } = useBalance({
+  const { data: balanceIN, refetch } = useBalance({
     address: address,
     token: coinIN.isNative ? undefined : coinIN.address,
   });
@@ -23,5 +23,6 @@ export const useGetBalance = (props: BalanceProps) => {
   return {
     in: balanceIN ? formatUnits(balanceIN.value, balanceIN.decimals) : "",
     out: balanceOUT ? formatUnits(balanceOUT.value, balanceOUT.decimals) : "",
+    refetch,
   };
 };

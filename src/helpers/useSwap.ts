@@ -44,7 +44,6 @@ export const useSwap = () => {
         account: address,
       });
 
-      toast.success("Token approved successfully");
       return true;
     } catch (e) {
       return false;
@@ -56,7 +55,8 @@ export const useSwap = () => {
     coinOUT: CoinType,
     slippage: number
   ) => {
-    if (!walletClient || !address || !coinOUT.value || !publicClient) return;
+    if (!walletClient || !address || !coinOUT.value || !publicClient)
+      return false;
 
     const isNativeIn = coinIN.isNative;
 
@@ -119,9 +119,20 @@ export const useSwap = () => {
       });
 
       // Send transaction
-      await walletClient.writeContract(request);
+      const txHash = await walletClient.writeContract(request);
 
-      toast.success("Transaction receipt");
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+        confirmations: 1, // espera 1 confirmação
+        timeout: 60_000, // opcional: timeout em ms
+      });
+
+      if (receipt) {
+        toast.success("Transaction receipt");
+        return true;
+      }
+
+      return false;
     } catch (e: any) {
       // Tratamento de erros comuns
       const msg = e?.message || "";
@@ -139,6 +150,7 @@ export const useSwap = () => {
       } else {
         toast.error("Transaction rejected");
       }
+      return false;
     }
   };
 
