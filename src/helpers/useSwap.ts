@@ -6,6 +6,7 @@ import type { AddressType, CoinType } from "../types";
 import { useGetTokenDecimals } from "./useGetTokenDecimals";
 import { useGetEstimatedAmount } from "./useGetEstimatedAmount";
 import toast from "react-hot-toast";
+import { useRef } from "react";
 
 export const useSwap = () => {
   const { data: walletClient } = useWalletClient();
@@ -13,6 +14,7 @@ export const useSwap = () => {
   const publicClient = usePublicClient();
   const getTokenDecimals = useGetTokenDecimals();
   const fetchEstimatedAmount = useGetEstimatedAmount();
+  const hasApprovalModalAppeared = useRef(false);
 
   const checkAndApproveToken = async (
     tokenAddress: AddressType,
@@ -34,6 +36,8 @@ export const useSwap = () => {
       if (currentAllowance >= amountInWei) {
         return true;
       }
+
+      hasApprovalModalAppeared.current = true;
 
       // Call approve with the required value (or a large value like MaxUint256)
       await walletClient.writeContract({
@@ -144,12 +148,16 @@ export const useSwap = () => {
           "Slippage is too low or liquidity is insufficient. Try increasing slippage"
         );
       } else if (msg.includes("TRANSFER_FROM_FAILED")) {
-        toast.error(
-          "Token transfer failed. Please confirm that you authorized the token correctly"
-        );
+        if (!hasApprovalModalAppeared.current) {
+          toast.error(
+            "Token transfer failed. Please confirm that you authorized the token correctly"
+          );
+        }
       } else {
         toast.error("Transaction rejected");
       }
+
+      hasApprovalModalAppeared.current = false;
       return false;
     }
   };
