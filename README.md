@@ -2,6 +2,8 @@
 
 **BNB Swap App** is a lightweight, modern dApp built with React for swapping tokens on the **Binance Smart Chain (BSC)**. It uses **PancakeSwap** as the routing protocol and integrates wallet connections via **RainbowKit** and **Wagmi**.
 
+![alt text](image.png)
+
 ---
 
 ## ⚙️ Tech Stack
