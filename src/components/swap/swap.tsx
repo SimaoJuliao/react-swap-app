@@ -30,15 +30,14 @@ export const Swap: React.FC = () => {
         Swap
       </h2>
 
-      <div
-        style={{ display: "flex", justifyContent: "flex-end" }}
-        onClick={onConnectWallet}
-      >
-        <ConnectButton
-          showBalance={false}
-          chainStatus="full"
-          accountStatus="full"
-        />
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div onClick={onConnectWallet}>
+          <ConnectButton
+            showBalance={false}
+            chainStatus="full"
+            accountStatus="full"
+          />
+        </div>
       </div>
 
       <Card.Body>
