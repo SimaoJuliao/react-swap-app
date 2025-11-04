@@ -71,6 +71,7 @@ const StyledInput = styled.input`
     width: 100%;
     max-width: 10ch;
     padding: 0rem;
+    color: #000;
   }
 `;
 
