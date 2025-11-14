@@ -39,12 +39,7 @@ export const Button: React.FC<React.PropsWithChildren<ButtonProps>> = (
   const { children, isDisabled, onClick } = props;
 
   return (
-    <StyledButton
-      onClick={onClick}
-      disabled={isDisabled}
-      style={{}}
-      className="button"
-    >
+    <StyledButton onClick={onClick} disabled={isDisabled}>
       {children}
     </StyledButton>
   );

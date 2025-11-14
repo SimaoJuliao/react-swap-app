@@ -8,6 +8,7 @@ import { Arrow } from "../../assets";
 import { Card } from "../card";
 import { Button } from "../button";
 import { InputLabel } from "../inputLabel";
+import { Balloon } from "../balloon";
 
 export const Swap: React.FC = () => {
   const {
@@ -30,7 +31,20 @@ export const Swap: React.FC = () => {
         Swap
       </h2>
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: !coins.coinIN.isNative ? "space-between" : "flex-end",
+          alignItems: "center",
+          gap: 32,
+        }}
+      >
+        {!coins.coinIN.isNative && (
+          <Balloon>
+            To convert LCR to BNB, first approve the spending cap, and then
+            confirm the swap.
+          </Balloon>
+        )}
         <div onClick={onConnectWallet}>
           <ConnectButton
             showBalance={false}
